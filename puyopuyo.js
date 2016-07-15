@@ -1,3 +1,8 @@
+/**
+ *  kaomojiyuu
+ *  勉強中です http://coderecipe.jp/recipe/7LYwBKheRt/
+ */
+
 enchant();  // 初期化
 
 var FPS = 30;    				// フレームレート
@@ -32,9 +37,6 @@ window.onload = function () {
         scene.addEventListener("enterframe", function() { // １フレームごとに呼び出される関数を登録
             if (!pair.isFall) {			 // 操作ぷよの着地判定
                 scene.removeChild(pair); // 操作ぷよをシーンから削除
-                freeFall(field);		 // 自由落下
-                chain(field);			 // 連鎖処理
-                map.loadData(field);	 // マップの再読み込み
                 if (field[2][3] != -1) { // ゲームオーバー判定
                     game.stop();
                     console.log("Game Over");
@@ -44,6 +46,9 @@ window.onload = function () {
                     scene.addChild(pair);
                 }
             }
+            freeFall(field);		 // 自由落下
+            if (game.frame % 10 == 0) chain(field);			 // 連鎖処理
+            map.loadData(field);	 // マップの再読み込み
         });
     };
     game.start();
@@ -72,7 +77,7 @@ function createPuyo (game){
  * このグループは自動でY座標を更新し、
  * キー入力を受付け、それに応じて挙動を取ります。
  * 着地するとfieldに操作ぷよの情報を追加します。
- * 
+ *
  * @game {Game}
  * @map {Map} フィールドを読み込むMapオブジェクト。
  *    操作ぷよとフィールドとの当たり判定用。
@@ -87,7 +92,7 @@ function createPair (game, map, field) {
     var forms = [[0, -CELL_SIZE], [CELL_SIZE, 0], [0, CELL_SIZE], [-CELL_SIZE, 0]]; // 操作ぷよの形
     var formNum = 0;			// 操作ぷよの形の番号。フォームナンバ
     /* キー押下カウント */
-    var inputRightCount = 0;	
+    var inputRightCount = 0;
     var inputLeftCount = 0;
     var inputAcount = 0;
     pair.isFall = true;		   // 落下中、つまり操作出来る状態かどうか
@@ -155,7 +160,7 @@ function chain (field) {
             };
         }
     }
-    if (freeFall(field) >= 1) chain(field); // 自由落下したぷよがあった場合は再帰
+    //if (freeFall(field) >= 1) chain(field); // 自由落下したぷよがあった場合は再帰
 }
 
 
@@ -197,7 +202,7 @@ function countPuyos (row, col, field) {
     var c = field[row][col];	// ぷよの色
     var n = 1;			// 1で初期化しているのは自分もカウントするため。
     field[row][col] = -1; // この場所をチェックした証として一時的に空白に
-    if (row-1>=2 && field[row-1][col]==c) n += countPuyos(row-1, col, field);	
+    if (row-1>=2 && field[row-1][col]==c) n += countPuyos(row-1, col, field);
     if (row+1<=MAX_ROW-2 && field[row+1][col]==c) n += countPuyos(row+1, col, field);
     if (col-1>=0 && field[row][col-1]==c) n += countPuyos(row, col-1, field);
     if (col+1<=MAX_COL-2 && field[row][col+1]==c) n += countPuyos(row, col+1, field);
